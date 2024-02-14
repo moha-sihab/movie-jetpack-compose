@@ -1,6 +1,5 @@
 package com.mohasihab.movie.core.helper
 
-import android.app.Application
 import com.mohasihab.moviejetpackcompose.BuildConfig
 import java.util.concurrent.TimeUnit
 import okhttp3.OkHttpClient
@@ -17,6 +16,7 @@ object NetworkHelper {
             .client(okHttpClient())
             .build()
     }
+
     private fun okHttpClient(): OkHttpClient {
         val okhttp = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)

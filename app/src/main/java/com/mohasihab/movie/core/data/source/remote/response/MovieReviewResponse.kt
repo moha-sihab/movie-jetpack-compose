@@ -23,7 +23,7 @@ data class AuthorDetailsResponse(
 	@SerializedName("name")
 	val name: String?,
 	@SerializedName("rating")
-	val rating: Any?,
+	val rating: Double?,
 	@SerializedName("username")
 	val username: String?
 )

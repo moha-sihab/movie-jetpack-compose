@@ -30,7 +30,7 @@ data class MovieDetailResponse(
 	@SerializedName("release_date")
 	val releaseDate: String?,
 	@SerializedName("vote_average")
-	val voteAverage: Any?,
+	val voteAverage: Double?,
 	@SerializedName("status")
 	val status: String?,
 )
@@ -54,8 +54,6 @@ data class ProductionCompaniesItemResponse(
 )
 
 data class ProductionCountriesItemResponse(
-	@SerializedName("iso_3166_1")
-	val iso31661: String?,
 	@SerializedName("name")
 	val name: String?,
 )
@@ -63,8 +61,6 @@ data class ProductionCountriesItemResponse(
 data class SpokenLanguagesItemResponse(
 	@SerializedName("name")
 	val name: String?,
-	@SerializedName("iso_639_1")
-	val iso6391: String?,
 	@SerializedName("english_name")
 	val englishName: String?,
 )

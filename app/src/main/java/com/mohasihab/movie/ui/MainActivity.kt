@@ -47,10 +47,10 @@ class MainActivity : ComponentActivity() {
                         ) {
                             homeScreen(
                                 navigateToMovie = {
-                                    navController.navigateToMovieScreen()
+                                    navController.navigateToMovieScreen(it.id.toString(),it.name)
                                 }
                             )
-                            movieScreen(navigateToMovie = {
+                            movieScreen(navigateToDetailMovie = {
                                 navController.navigateToDetailScreen()
                             })
                             detailScreen()

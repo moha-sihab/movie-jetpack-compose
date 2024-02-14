@@ -24,6 +24,7 @@ android {
 
         buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/\"")
         buildConfigField("String", "API_KEY", "\"7b67846c06b1b43487563cbc627cf955\"")
+        buildConfigField("String", "END_POINT_IMAGE", "\"https://image.tmdb.org/t/p/w500\"")
     }
 
     buildTypes {
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material)
     implementation(libs.compose.viewmodel)
     implementation(libs.compose.constraint)
     implementation(libs.compose.navigation)
@@ -77,6 +79,8 @@ dependencies {
     implementation(libs.retrofit2.retrofit.gson)
     implementation(libs.okhttp3.okhttp)
     implementation(libs.okhttp3.okhttp.logging)
+
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.junitTest)

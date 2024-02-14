@@ -15,7 +15,6 @@ class HomeViewModel @Inject constructor(
     private val useCase : GenreUseCaseContract
 ) : ViewModel() {
     var state by mutableStateOf(HomeState())
-
     fun fetchGenre(){
         viewModelScope.launch {
             useCase.fetchGenre().collect {

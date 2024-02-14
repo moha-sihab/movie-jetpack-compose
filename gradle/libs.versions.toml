@@ -17,6 +17,8 @@ navigationCompose = "2.7.7"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
 okhttpLoggingInterceptor = "4.11.0"
+material = "1.6.1"
+coil = "2.3.0"
 
 
 [libraries]
@@ -28,6 +30,7 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
 compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodelCompose" }
 compose-constraint = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintCompose" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -44,6 +47,7 @@ retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref =
 retrofit2-retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 okhttp3-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okhttp3-okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
+coil-compose = { module="io.coil-kt:coil-compose", version.ref="coil"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }

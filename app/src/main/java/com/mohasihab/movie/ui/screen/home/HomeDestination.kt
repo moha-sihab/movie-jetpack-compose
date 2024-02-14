@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
+import com.mohasihab.movie.core.domain.entities.GenresItemEntity
 
 object HomeDestination {
     const val route = "home"
@@ -13,7 +14,7 @@ object HomeDestination {
 
 
 fun NavGraphBuilder.homeScreen(
-    navigateToMovie: (movieId: String) -> Unit,
+    navigateToMovie: (genre : GenresItemEntity) -> Unit,
 ) {
     composable(route = HomeDestination.route, content = {
         val viewModel: HomeViewModel = hiltViewModel()

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Movie Jetpack Compose</string>
+    <string name="content_description_back">Back</string>
+    <string name="app_bar_title">Movie Jetpack Compose</string>
 </resources>

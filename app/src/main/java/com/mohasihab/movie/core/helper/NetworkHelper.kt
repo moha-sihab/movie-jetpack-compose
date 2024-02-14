@@ -20,7 +20,6 @@ object NetworkHelper {
     private fun okHttpClient(): OkHttpClient {
         val okhttp = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .addInterceptor(CustomInterceptor())
             .addInterceptor(provideHttpLoggingInterceptor())
             .addInterceptor(provideCacheInterceptor())
             .callTimeout(30, TimeUnit.SECONDS)

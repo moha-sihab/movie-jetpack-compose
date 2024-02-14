@@ -9,6 +9,8 @@ sealed class ResultState<T>(
 
     class Loading<T> : ResultState<T>()
 
+    class Idle<T> : ResultState<T>()
+
     class Error<T>(message: String, data: T?) :
         ResultState<T>(data, message)
 

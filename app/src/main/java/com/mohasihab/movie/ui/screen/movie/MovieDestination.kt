@@ -25,7 +25,7 @@ fun NavGraphBuilder.movieScreen(navigateToDetailMovie: (movieId: String) -> Unit
             LaunchedEffect(Unit) {
                 val genreId = navBackStackEntry.arguments?.getString("genreId") ?: ""
                 val genreName = navBackStackEntry.arguments?.getString("genreName") ?: ""
-                viewModel.fetchMovieByGenre(genreId)
+                viewModel.fetchMovieByGenre(genreId,1)
                 viewModel.setGenre(
                     GenresItemEntity(
                         id = genreId.toInt(),

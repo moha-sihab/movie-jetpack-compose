@@ -1,6 +1,7 @@
 package com.mohasihab.movie.ui.screen.movie
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -22,6 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +43,7 @@ import com.mohasihab.movie.ui.component.LoadingProgressBar
 import com.mohasihab.movie.ui.component.MoviePoster
 import com.mohasihab.movie.ui.component.MovieRating
 import com.mohasihab.movie.ui.component.MovieTitle
+import com.mohasihab.movie.ui.component.ShouldLoadMore
 import com.mohasihab.movie.ui.theme.MovieTheme
 import com.mohasihab.movie.ui.theme.Spacing
 import com.mohasihab.moviejetpackcompose.R
@@ -51,7 +58,7 @@ fun MovieScreen(
         Scaffold(
             topBar = {
                 AppTopBar(
-                    titleTopBar =state.genre.name
+                    titleTopBar = state.genre.name
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,
@@ -97,14 +104,20 @@ fun MovieContent(
     val listState = rememberLazyGridState()
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.movies is ResultState.Loading,
-        onRefresh = { viewModel.fetchMovieByGenre(state.genre.id.toString()) }
+        onRefresh = { viewModel.fetchMovieByGenre(state.genre.id.toString(), 1) }
     )
+    listState.ShouldLoadMore {
+        viewModel.fetchMovieByGenre(state.genre.id.toString(), viewModel.page + 1)
+    }
+
     LazyVerticalGrid(
         modifier = Modifier
             .padding(paddingValues)
             .pullRefresh(pullRefreshState),
         columns = GridCells.Fixed(2),
-        state = listState
+        state = listState,
+        flingBehavior =  ScrollableDefaults.flingBehavior(),
+        userScrollEnabled = true
     ) {
         item(span = { GridItemSpan(2) }) { ->
             Column(

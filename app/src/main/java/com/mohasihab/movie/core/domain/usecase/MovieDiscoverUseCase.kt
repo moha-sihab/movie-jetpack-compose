@@ -12,17 +12,30 @@ import kotlinx.coroutines.flow.flow
 class MovieDiscoverUseCase @Inject constructor(
     private val repository: MovieDiscoverRepositoryContract,
 ) : MovieDiscoverUseCaseContract {
-    override suspend fun fetchMovieByGenreId(genreId: String): Flow<ResultState<List<MovieDiscoverEntity>>> =
+    override suspend fun fetchMovieByGenreId(
+        genreId: String,
+        page: Int,
+        previousData: List<MovieDiscoverEntity>?,
+    ): Flow<ResultState<List<MovieDiscoverEntity>>> =
         flow {
             try {
                 emit(ResultState.Loading())
                 val params = hashMapOf(
                     "with_genres" to genreId,
-                    "page" to "1"
+                    "page" to page.toString()
                 )
 
                 val response = repository.fetchDiscoverMovieByGenre(params)
-                emit(ResultState.Success(data = response.results.map()))
+                val dataMovies: MutableList<MovieDiscoverEntity> = mutableListOf()
+                if (page > 1) {
+                    if (previousData != null) {
+                        dataMovies.addAll(previousData)
+                        dataMovies.addAll(response.results.map())
+                    }
+                } else {
+                    dataMovies.addAll(response.results.map())
+                }
+                emit(ResultState.Success(data = dataMovies))
             } catch (ex: Throwable) {
                 emit(ResultState.Error(data = null, message = ex.message.toString()))
             }

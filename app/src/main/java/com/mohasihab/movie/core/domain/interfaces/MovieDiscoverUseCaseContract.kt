@@ -5,5 +5,5 @@ import com.mohasihab.movie.core.domain.entities.ResultState
 import kotlinx.coroutines.flow.Flow
 
 interface MovieDiscoverUseCaseContract {
-    suspend fun fetchMovieByGenreId(genreId : String): Flow<ResultState<List<MovieDiscoverEntity>>>
+    suspend fun fetchMovieByGenreId(genreId : String, page : Int, previousData : List<MovieDiscoverEntity>? = null): Flow<ResultState<List<MovieDiscoverEntity>>>
 }

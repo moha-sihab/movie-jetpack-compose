@@ -271,8 +271,8 @@ fun DetailMovieReviewItem(review: MovieReviewEntity) {
             ),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Column(
@@ -352,8 +352,7 @@ fun DetailMovieVideos(videos: MovieVideoEntity, onTap: (String) -> Unit) {
                 color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Spacing().medium)
-                   ,
+                    .padding(Spacing().medium),
                 softWrap = true,
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Start

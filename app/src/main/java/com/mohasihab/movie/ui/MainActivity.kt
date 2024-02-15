@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                             movieScreen(navigateToDetailMovie = {
-                                navController.navigateToDetailScreen()
+                                navController.navigateToDetailScreen(it)
                             })
                             detailScreen()
                         }

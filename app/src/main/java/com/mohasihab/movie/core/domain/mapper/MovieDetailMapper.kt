@@ -8,6 +8,7 @@ import com.mohasihab.movie.core.domain.entities.GenresItemDetailEntity
 import com.mohasihab.movie.core.domain.entities.MovieDetailEntity
 import com.mohasihab.movie.core.domain.entities.ProductionCompaniesItemEntity
 import com.mohasihab.movie.core.domain.entities.SpokenLanguagesItemEntity
+import com.mohasihab.moviejetpackcompose.BuildConfig
 
 fun MovieDetailResponse?.map(): MovieDetailEntity {
     val genres: MutableList<GenresItemDetailEntity> = mutableListOf()
@@ -31,17 +32,22 @@ fun MovieDetailResponse?.map(): MovieDetailEntity {
         companies.add(it.map())
     }
 
+    val endPointImage = BuildConfig.END_POINT_IMAGE
+    val posterPath =
+        if (this?.posterPath?.isNotEmpty() == true) "$endPointImage${this.posterPath}" else ""
+    val backdropPath = if (this?.backdropPath?.isNotEmpty() == true) "$endPointImage${this.backdropPath}" else ""
+
     return MovieDetailEntity(
         originalLanguage = this?.originalLanguage ?: "",
         title = this?.title ?: "",
-        backdropPath = this?.backdropPath ?: "",
+        backdropPath = backdropPath,
         genres = genres,
         productionCountries = countries,
         id = this?.id ?: 0,
         voteCount = this?.voteCount ?: 0,
         overview = this?.overview ?: "",
         originalTitle = this?.originalTitle ?: "",
-        posterPath = this?.posterPath ?: "",
+        posterPath = posterPath,
         spokenLanguages = spokenLanguages,
         productionCompanies = companies,
         releaseDate = this?.releaseDate ?: "",

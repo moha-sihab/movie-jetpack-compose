@@ -1,9 +1,10 @@
 package com.mohasihab.movie.ui.screen.detail
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.mohasihab.movie.ui.screen.movie.MovieScreen
 
 
 object DetailDestination {
@@ -12,16 +13,22 @@ object DetailDestination {
 
 
 fun NavGraphBuilder.detailScreen() {
-    composable(route = DetailDestination.route, content = {
-        /*   val viewModel: HomeViewModel = koinViewModel()
-           val state: HomeState by viewModel.state.collectAsStateWithLifecycle()
-   */
+    composable(route = "${DetailDestination.route}/{movieId}", content = { navBackStackEntry ->
+        val viewModel: DetailViewModel = hiltViewModel()
+        val state = viewModel.state
 
-        DetailScreen()
+        LaunchedEffect(Unit) {
+            val movieId = navBackStackEntry.arguments?.getString("movieId") ?: ""
+            viewModel.fetchDetailMovie(movieId)
+        }
+
+        DetailScreen(
+            state = state
+        )
 
     })
 }
 
-fun NavController.navigateToDetailScreen() {
-    navigate(route = DetailDestination.route)
+fun NavController.navigateToDetailScreen(movieId: String) {
+    navigate(route = "${DetailDestination.route}/$movieId")
 }

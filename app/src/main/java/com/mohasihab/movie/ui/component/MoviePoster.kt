@@ -17,6 +17,7 @@ fun MoviePoster(
     posterPath: String,
     movieTitle: String,
     modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     val painter = rememberAsyncImagePainter(
         model = posterPath,
@@ -27,7 +28,7 @@ fun MoviePoster(
     Image(
         painter = painter,
         contentDescription = movieTitle,
-        contentScale = ContentScale.Crop,
+        contentScale = contentScale,
         modifier = modifier
             .size(200.dp)
     )

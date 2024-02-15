@@ -51,7 +51,7 @@ fun MovieScreen(
         Scaffold(
             topBar = {
                 AppTopBar(
-                    titleTopBar = stringResource(id = R.string.header_genre_title, state.genre.name)
+                    titleTopBar =state.genre.name
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,

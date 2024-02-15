@@ -143,7 +143,7 @@ fun GenreItem(
                 navigateToMovie(genre)
             }
             .height(height = 100.dp)
-            .padding(start = Spacing().medium, top = Spacing().medium),
+            .padding(Spacing().small),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = genre.cardColor.containerColor,

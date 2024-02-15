@@ -2,11 +2,12 @@ package com.mohasihab.movie.ui.screen.detail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,30 +19,45 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.mohasihab.movie.core.domain.entities.MovieDetailEntity
 import com.mohasihab.movie.core.domain.entities.MovieReviewEntity
 import com.mohasihab.movie.core.domain.entities.MovieVideoEntity
+import com.mohasihab.movie.core.domain.entities.ResultState
 import com.mohasihab.movie.core.helper.youtubeThumbnail
 import com.mohasihab.movie.ui.component.AppTopBar
 import com.mohasihab.movie.ui.component.ErrorLayout
+import com.mohasihab.movie.ui.component.LoadingProgressBar
 import com.mohasihab.movie.ui.component.MoviePoster
 import com.mohasihab.movie.ui.component.MovieRating
 import com.mohasihab.movie.ui.component.MovieTitle
+import com.mohasihab.movie.ui.component.YoutubeWidget
 import com.mohasihab.movie.ui.theme.MovieTheme
 import com.mohasihab.movie.ui.theme.Spacing
+import com.mohasihab.moviejetpackcompose.R
 
 @Composable
 fun DetailScreen(
@@ -57,6 +73,9 @@ fun DetailScreen(
             containerColor = MaterialTheme.colorScheme.background,
         ) { innerPadding ->
             DetailContent(paddingValues = innerPadding, state)
+            if (state.reviews is ResultState.Loading || state.movie is ResultState.Loading || state.videos is ResultState.Loading) {
+                LoadingProgressBar()
+            }
         }
     }
 }
@@ -64,6 +83,15 @@ fun DetailScreen(
 @Composable
 fun DetailContent(paddingValues: PaddingValues, state: DetailState) {
     val listState = rememberLazyListState()
+    var currentPlayingVideoId by remember { mutableStateOf(state.videos.data?.get(0)?.key ?: "") }
+    var showVideo by remember { mutableStateOf(false) }
+
+    if (showVideo) {
+        VideoBottomSheet(videoKey = currentPlayingVideoId) {
+            showVideo = false
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         state = listState
@@ -81,7 +109,7 @@ fun DetailContent(paddingValues: PaddingValues, state: DetailState) {
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "Trailers : ",
+                    text = stringResource(R.string.trailers),
                     style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onBackground),
                     textAlign = TextAlign.Start,
                     softWrap = true
@@ -90,17 +118,20 @@ fun DetailContent(paddingValues: PaddingValues, state: DetailState) {
         }
         item {
             state.videos.data.let { videos ->
+
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing().medium, Alignment.Start)
                 ) {
-                    items(items = videos ?: mutableListOf()) {
-                        DetailMovieVideos(videos = it)
+                    items(items = videos?.filter { it.site == "YouTube" } ?: mutableListOf()) {
+                        DetailMovieVideos(videos = it, onTap = {
+                            currentPlayingVideoId = it
+                            showVideo = true
+                        })
                     }
                 }
             }
-
-            if (state.reviews.data?.isEmpty() == true) {
+            if (state.videos.data?.isEmpty() == true) {
                 ErrorLayout(error = "No Videos")
             }
 
@@ -113,7 +144,7 @@ fun DetailContent(paddingValues: PaddingValues, state: DetailState) {
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "Reviews : ",
+                    text = stringResource(R.string.reviews),
                     style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onBackground),
                     textAlign = TextAlign.Start,
                     softWrap = true
@@ -203,7 +234,7 @@ fun DetailMovieHeader(movie: MovieDetailEntity?) {
         )
 
         Text(
-            text = "Overview : ",
+            text = stringResource(R.string.overview),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = Spacing().medium),
@@ -288,13 +319,81 @@ fun DetailMovieReviewItem(review: MovieReviewEntity) {
 }
 
 @Composable
-fun DetailMovieVideos(videos: MovieVideoEntity) {
-    Box(modifier = Modifier
-        .clickable { }
+fun DetailMovieVideos(videos: MovieVideoEntity, onTap: (String) -> Unit) {
+    ConstraintLayout(modifier = Modifier
+        .clickable { onTap(videos.key) }
         .padding(Spacing().medium)
-        .clip(RoundedCornerShape(20.dp))
+        .clip(RoundedCornerShape(20.dp))) {
+        val (poster, text) = createRefs()
+        MoviePoster(
+            posterPath = videos.key.youtubeThumbnail(),
+            movieTitle = videos.name,
+            modifier = Modifier.constrainAs(poster) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            })
+        Surface(
+            color = Color.Black.copy(alpha = 0.6f),
+            modifier = Modifier
+                .fillMaxSize()
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(4.dp))
+                .constrainAs(text) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        ) {
+            Text(
+                text = "Click to Show Video",
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing().medium)
+                   ,
+                softWrap = true,
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Start
+            )
+        }
+
+    }
+    /*Box(modifier = Modifier
+        .clickable { onTap(videos.key) }
+        .padding(Spacing().medium)
+        .clip(RoundedCornerShape(20.dp)),
+        contentAlignment = Alignment.Center
     ) {
         MoviePoster(posterPath = videos.key.youtubeThumbnail(), movieTitle = videos.name)
-    }
+        Text(
+            text = "Click to Show Video",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Spacing().medium)
+                .align(ContentAlign.CenterHorizontally),
+            softWrap = true,
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Start
+        )
+    }*/
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VideoBottomSheet(videoKey: String, onDismiss: () -> Unit) {
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = modalBottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+        Column(modifier = Modifier.height(300.dp)) {
+            YoutubeWidget(videoId = videoKey, modifier = Modifier)
+        }
+
+    }
 }

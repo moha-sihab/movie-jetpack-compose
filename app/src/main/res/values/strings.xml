@@ -4,4 +4,7 @@
     <string name="app_bar_title">Movie Jetpack Compose</string>
     <string name="header_genre_title">Movies by Genre : %s</string>
     <string name="sub_header_genre_title">Genre</string>
+    <string name="overview">"Overview : "</string>
+    <string name="reviews">"Reviews : "</string>
+    <string name="trailers">"Trailers : "</string>
 </resources>

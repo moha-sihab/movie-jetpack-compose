@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.okhttp3.okhttp.logging)
 
     implementation(libs.coil.compose)
+    implementation(libs.youtube.player)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.junitTest)

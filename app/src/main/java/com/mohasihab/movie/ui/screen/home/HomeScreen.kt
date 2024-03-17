@@ -16,9 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mohasihab.movie.core.domain.entities.GenreEntity
 import com.mohasihab.movie.core.domain.entities.GenresItemEntity
-import com.mohasihab.movie.core.domain.entities.ResultState
 import com.mohasihab.movie.ui.component.AppTopBar
 import com.mohasihab.movie.ui.component.ErrorLayout
 import com.mohasihab.movie.ui.component.LoadingProgressBar
@@ -44,7 +40,6 @@ import com.mohasihab.moviejetpackcompose.R
 @Composable
 fun HomeScreen(
     navigateToMovie: (genre: GenresItemEntity) -> Unit,
-    genres: ResultState<GenreEntity>,
     state: HomeState,
     viewModel: HomeViewModel,
 ) {
@@ -57,14 +52,10 @@ fun HomeScreen(
             },
             containerColor = MaterialTheme.colorScheme.background,
         ) { innerPadding ->
-            when (genres) {
-
-                is ResultState.Loading -> {
-                    LoadingProgressBar()
-                }
-
-                is ResultState.Success -> {
-                    genres.data?.let {
+            state.genre.DisplayResult(
+                onLoading = { LoadingProgressBar() },
+                onSuccess = {
+                    state.genre.getSuccessData().let {
                         HomeContent(
                             paddingValues = innerPadding,
                             genres = it,
@@ -73,20 +64,16 @@ fun HomeScreen(
                             viewModel = viewModel
                         )
                     }
+                },
+                onError = {
+                    ErrorLayout(error = state.genre.getErrorMessage())
                 }
-
-                is ResultState.Error -> {
-                    ErrorLayout(error = genres.message.toString())
-                }
-
-                else -> {}
-            }
+            )
 
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeContent(
     paddingValues: PaddingValues,
@@ -96,14 +83,13 @@ fun HomeContent(
     navigateToMovie: (genre: GenresItemEntity) -> Unit,
 ) {
     val listState = rememberLazyGridState()
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.genre is ResultState.Loading,
-        onRefresh = { viewModel.fetchGenre() }
-    )
+    /* val pullRefreshState = rememberPullRefreshState(
+         refreshing = state.genre.isLoading(),
+         onRefresh = { viewModel.fetchGenre() }
+     )*/
     LazyVerticalGrid(
         modifier = Modifier
-            .padding(paddingValues)
-            .pullRefresh(pullRefreshState),
+            .padding(paddingValues),
         columns = GridCells.Fixed(2),
         state = listState
     ) {
